@@ -1,6 +1,27 @@
 // ── GitHub Models API ──
 const API_URL = "https://models.inference.ai.azure.com/chat/completions";
 
+// ── Normalize old lowercase model IDs → correct casing ──
+const MODEL_ID_FIX = {
+  "meta-llama-3.3-70b-instruct":        "Meta-Llama-3.3-70B-Instruct",
+  "meta-llama-3.1-70b-instruct":        "Meta-Llama-3.1-70B-Instruct",
+  "meta-llama-3.1-8b-instruct":         "Meta-Llama-3.1-8B-Instruct",
+  "meta-llama-3.2-11b-vision-instruct": "Meta-Llama-3.2-11B-Vision-Instruct",
+  "meta-llama-3.2-3b-instruct":         "Meta-Llama-3.2-3B-Instruct",
+  "meta-llama-3.2-1b-instruct":         "Meta-Llama-3.2-1B-Instruct",
+  "mistral-large-2411":                 "Mistral-large",
+  "mistral-small-2503":                 "Mistral-small",
+  "ministral-3b":                       "Ministral-3B",
+  "phi-4":                              "Phi-4",
+  "phi-4-mini-instruct":                "Phi-4-mini",
+  "phi-3.5-mini-instruct":              "Phi-3.5-mini-instruct",
+  "phi-3.5-moe-instruct":               "Phi-3.5-MoE-instruct",
+  "phi-3-medium-128k-instruct":         "Phi-3-medium-128k-instruct",
+  "phi-3-mini-128k-instruct":           "Phi-3-mini-128k-instruct",
+  "phi-3-small-128k-instruct":          "Phi-3-small-128k-instruct",
+};
+function fixModelId(id) { return MODEL_ID_FIX[id] || id; }
+
 const DEFAULT_SYSTEM_PROMPT =
   "You are CLAW, an expert autonomous coding agent. Think step-by-step. " +
   "Write clean, production-ready code with clear explanations. " +
@@ -148,7 +169,7 @@ function loadConversation(id) {
   const conv = conversations.find(c => c.id === id);
   if (!conv) return;
   activeConvId = id;
-  selectModel(conv.model || MODELS[0].id);
+  selectModel(fixModelId(conv.model) || MODELS[0].id);
   renderHistory();
   clearMessagesUI();
   conv.messages.forEach(msg => {
