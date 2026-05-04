@@ -549,6 +549,15 @@ document.getElementById("sidebar-toggle").addEventListener("click", () => {
 
 // ── Init ──
 (function init() {
+  // Auto-save token from URL: ?token=ghp_xxx  (one-time setup)
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlToken = urlParams.get("token");
+  if (urlToken && urlToken.startsWith("ghp_")) {
+    setToken(urlToken);
+    // Remove token from URL so it's not visible in address bar
+    window.history.replaceState({}, "", window.location.pathname);
+  }
+
   loadConversations();
   buildModelList();
 
